@@ -22,7 +22,7 @@ namespace VotingService
                 // an instance of the class is created in this host process.
                 ////
                 ////
-                //
+                //ok0
 
                 ServiceRuntime.RegisterServiceAsync("VotingServiceType",
                     context => new VotingService(context)).GetAwaiter().GetResult();
