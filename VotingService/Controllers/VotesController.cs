@@ -6,7 +6,8 @@ using System.Net.Http;
 using System.Threading;
 using System.Net.Http.Headers;
 using System.Web.Http;
-
+//using System;
+using VotingService;
 
 public class VotesController : ApiController
 {
@@ -21,6 +22,9 @@ public class VotesController : ApiController
     [Route("api/votes")]
     public HttpResponseMessage Get()
     {
+        string activityId = Guid.NewGuid().ToString();
+        ServiceEventSource.Current.ServiceRequestStart("VotesController.Get", activityId);
+
         Interlocked.Increment(ref _requestCount);
 
         List<KeyValuePair<string, int>> votes = new List<KeyValuePair<string, int>>(_counts.Count);
@@ -31,6 +35,9 @@ public class VotesController : ApiController
 
         var response = Request.CreateResponse(HttpStatusCode.OK, votes);
         response.Headers.CacheControl = new CacheControlHeaderValue() { NoCache = true, MustRevalidate = true };
+
+        ServiceEventSource.Current.ServiceRequestStop("VotesController.Get", activityId);
+
         return response;
     }
 
@@ -38,6 +45,9 @@ public class VotesController : ApiController
     [Route("api/{key}")]
     public HttpResponseMessage Post(string key)
     {
+        string activityId = Guid.NewGuid().ToString();
+        ServiceEventSource.Current.ServiceRequestStart("VotesController.Post", activityId);
+
         Interlocked.Increment(ref _requestCount);
 
         if (false == _counts.ContainsKey(key))
@@ -48,7 +58,7 @@ public class VotesController : ApiController
         {
             _counts[key] = _counts[key] + 1;
         }
-
+        ServiceEventSource.Current.ServiceRequestStop("VotesController.Post", activityId);
         return Request.CreateResponse(HttpStatusCode.NoContent);
     }
 
@@ -56,6 +66,9 @@ public class VotesController : ApiController
     [Route("api/{key}")]
     public HttpResponseMessage Delete(string key)
     {
+        string activityId = Guid.NewGuid().ToString();
+        ServiceEventSource.Current.ServiceRequestStart("VotesController.Delete", activityId);
+
         Interlocked.Increment(ref _requestCount);
 
         if (true == _counts.ContainsKey(key))
@@ -63,7 +76,7 @@ public class VotesController : ApiController
             if (_counts.Remove(key))
                 return Request.CreateResponse(HttpStatusCode.OK);
         }
-
+        ServiceEventSource.Current.ServiceRequestStop("VotesController.Delete", activityId);
         return Request.CreateResponse(HttpStatusCode.NotFound);
     }
 
@@ -71,6 +84,9 @@ public class VotesController : ApiController
     [Route("api/{file}")]
     public HttpResponseMessage GetFile(string file)
     {
+        string activityId = Guid.NewGuid().ToString();
+        ServiceEventSource.Current.ServiceRequestStart("VotesController.GetFile", activityId);
+
         string response = null;
         string responseType = "text/html";
 
@@ -82,7 +98,7 @@ public class VotesController : ApiController
             string path = string.Format(@"..\VotingServicePkg.Code.1.0.0\{0}", file);
             response = File.ReadAllText(path);
         }
-
+        ServiceEventSource.Current.ServiceRequestStop("VotesController.GetFile", activityId);
         if (null != response)
             return Request.CreateResponse(HttpStatusCode.OK, response, responseType);
         else

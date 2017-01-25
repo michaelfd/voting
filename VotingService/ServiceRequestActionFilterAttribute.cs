@@ -9,7 +9,7 @@ namespace VotingService
     {
         public override void OnActionExecuting(HttpActionContext actionContext)
         {
-            ServiceEventSource.Current.ServiceRequestStart(actionContext.ActionDescriptor.ActionName);
+            ServiceEventSource.Current.ServiceRequestStart(actionContext.ActionDescriptor.ActionName, actionContext.ActionDescriptor.ActionBinding.ToString());
         }
 
         public override void OnActionExecuted(HttpActionExecutedContext actionExecutedContext)

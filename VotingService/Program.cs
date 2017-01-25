@@ -31,7 +31,7 @@ namespace VotingService
             }
             catch (Exception e)
             {
-                ServiceEventSource.Current.ServiceHostInitializationFailed(e.ToString());
+                ServiceEventSource.Current.ServiceHostInitializationFailed(e.ToString(), e.ToString());
                 throw;
             }
         }
